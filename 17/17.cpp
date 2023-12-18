@@ -45,14 +45,14 @@ int main(int argc, char const *argv[]) {
     R = board.size();
     C = board[0].size();
 
-    for(int i=0; i<R; ++i) {
+    /*for(int i=0; i<R; ++i) {
         for(int j=0; j<C; ++j) {
             cout << board[i][j];
         }
         cout << '\n';
-    }
+    }*/
 
-    vector<vector<vector<vector<int>>>> dist(R, vector<vector<vector<int>>>(C, vector<vector<int>>(4, vector<int>(10+1, INF))));
+    vector<vector<vector<vector<int>>>> dist(R, vector<vector<vector<int>>>(C, vector<vector<int>>(4, vector<int>(10, INF))));
     priority_queue<info, vector<info>, greater<info>> pq;
     dist[0][0][DOWN][0] = 0;
     dist[0][0][RIGHT][0] = 0;
@@ -69,7 +69,7 @@ int main(int argc, char const *argv[]) {
         if(d > dist[r][c][dir][t])
             continue;
 
-        if(t < 10) { //Go forward
+        if(t < 9) { //Go forward
             int nr = r + incR[dir];
             int nc = c + incC[dir];
 
@@ -83,7 +83,7 @@ int main(int argc, char const *argv[]) {
             }
         }
 
-        if(t >= 4) {
+        if(t >= 3) {
             auto [adir, bdir] = deg90[dir];
 
             int nr = r + incR[adir];
@@ -91,9 +91,9 @@ int main(int argc, char const *argv[]) {
             if(0 <= nr && nr < R
             && 0 <= nc && nc < C) {
                 int cst = board[nr][nc];
-                if(d+cst < dist[nr][nc][adir][1]) {
-                    dist[nr][nc][adir][1] = d+cst;
-                    pq.push(make_pair(d+cst, Data{nr,nc,adir,1}));
+                if(d+cst < dist[nr][nc][adir][0]) {
+                    dist[nr][nc][adir][0] = d+cst;
+                    pq.push(make_pair(d+cst, Data{nr,nc,adir,0}));
                 }
             }
 
@@ -102,9 +102,9 @@ int main(int argc, char const *argv[]) {
             if(0 <= nr && nr < R
             && 0 <= nc && nc < C) {
                 int cst = board[nr][nc];
-                if(d+cst < dist[nr][nc][bdir][1]) {
-                    dist[nr][nc][bdir][1] = d+cst;
-                    pq.push(make_pair(d+cst, Data{nr,nc,bdir,1}));
+                if(d+cst < dist[nr][nc][bdir][0]) {
+                    dist[nr][nc][bdir][0] = d+cst;
+                    pq.push(make_pair(d+cst, Data{nr,nc,bdir,0}));
                 }
             }
         }
@@ -112,7 +112,7 @@ int main(int argc, char const *argv[]) {
 
     int ans = INF;
     for(int i=0; i<4; ++i) {
-        for(int j=0; j<11; ++j) {
+        for(int j=3; j<10; ++j) {
             ans = min(ans, dist[R-1][C-1][i][j]);
         }
     }
